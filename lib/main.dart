@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'assets/icons/app_icons.dart' show CustomIcons;
 import 'views/home.dart';
 
 void main() {
