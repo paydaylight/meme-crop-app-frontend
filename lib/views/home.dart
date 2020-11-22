@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../assets/icons/app_icons.dart' show CustomIcons;
+import './show_image.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,13 +14,13 @@ class _HomeScreenState extends State<HomeScreen> {
   File _image;
   final _picker = ImagePicker();
 
-  void _galleryImage() async {
+  Future<void> _galleryImage() async {
     final image = await _picker.getImage(source: ImageSource.gallery);
 
     _setState(image);
   }
 
-  void _cameraImage() async {
+  Future<void> _cameraImage() async {
     final image = await _picker.getImage(source: ImageSource.camera);
 
     _setState(image);
@@ -52,9 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ListTile(
                 leading: Icon(Icons.photo_camera),
                 title: Text('open camera'),
-                onTap: () {
-                  _cameraImage();
+                onTap: () async {
+                  await _cameraImage();
                   Navigator.of(context).pop();
+                  Navigator.of(context).push(_createShowRoute(_image));
                 },
               ),
               ListTile(
@@ -62,9 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icons.photo_library,
                 ),
                 title: Text('open gallery'),
-                onTap: () {
-                  _galleryImage();
+                onTap: () async {
+                  await _galleryImage();
                   Navigator.of(context).pop();
+                  Navigator.of(context).push(_createShowRoute(_image));
                 },
               )
             ],
@@ -103,6 +106,17 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Route _createShowRoute(image) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondryAnimation) => ShowImageScreen(
+        parentImage: image,
+      ),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return child;
+      },
     );
   }
 }
